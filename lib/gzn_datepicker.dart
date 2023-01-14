@@ -6,18 +6,20 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 class DatePickerDialogV1 extends StatelessWidget {
   List<String> disabledDate;
   DateRangePickerController controller;
+  DateRangePickerSelectionMode selectionMode;
 
   DatePickerDialogV1({
     Key? key,
     required this.disabledDate,
     required this.controller,
+    this.selectionMode = DateRangePickerSelectionMode.single, //multi, single, range, extendableRange, multiRange
   }) : super(key: key);
 
   void onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
     List<DateTime> res = [];
     if (args.value is PickerDateRange) {
       res = getDaysInBetween(args.value.startDate, args.value.endDate ?? args.value.startDate);
-      res = clearWeekendDays(res);
+      res = clearWeekendsDays(res);
     } else if (args.value is DateTime) {
       res = [args.value];
     } else if (args.value is List<DateTime>) {
@@ -49,6 +51,7 @@ class DatePickerDialogV1 extends StatelessWidget {
                   onSelectionChanged: onSelectionChanged,
                   disabledDate: disabledDate,
                   controller: controller,
+                  selectionMode: selectionMode,
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -86,19 +89,21 @@ class DatePickerV1 extends StatelessWidget {
   void Function(DateRangePickerSelectionChangedArgs args) onSelectionChanged;
   List<String> disabledDate;
   DateRangePickerController controller;
+  DateRangePickerSelectionMode selectionMode;
 
   DatePickerV1({
     Key? key,
     required this.onSelectionChanged,
     required this.disabledDate,
     required this.controller,
+    required this.selectionMode,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    List<DateTime> weekends = getWeekensV2(disabledDate);
+    List<DateTime> weekends = getWeekends(disabledDate);
     return SizedBox(
       height: height * 0.5,
       width: width,
@@ -127,11 +132,7 @@ class DatePickerV1 extends StatelessWidget {
         ),
         // enablePastDates: false,
         onSelectionChanged: onSelectionChanged,
-        selectionMode: DateRangePickerSelectionMode.multiple,
-        // selectionMode: DateRangePickerSelectionMode.single,
-        // selectionMode: DateRangePickerSelectionMode.range,
-        // selectionMode: DateRangePickerSelectionMode.extendableRange,
-        // selectionMode: DateRangePickerSelectionMode.multiRange,
+        selectionMode: selectionMode,
         selectableDayPredicate: (DateTime date) {
           if (date.weekday == DateTime.saturday || date.weekday == DateTime.sunday) {
             return false;
@@ -146,18 +147,7 @@ class DatePickerV1 extends StatelessWidget {
   }
 }
 
-List<DateTime> getWeekens() {
-  List<DateTime> allDate = getDaysInBetween(DateTime(DateTime.now().year - 3), DateTime(DateTime.now().year + 3));
-  List<DateTime> weekends = [];
-  for (var i = 0; i < allDate.length; i++) {
-    if (allDate[i].weekday == DateTime.saturday || allDate[i].weekday == DateTime.sunday) {
-      weekends.add(allDate[i]);
-    }
-  }
-  return weekends;
-}
-
-List<DateTime> getWeekensV2(List<String> disabledDate) {
+List<DateTime> getWeekends(List<String> disabledDate) {
   List<DateTime> allDate = getDaysInBetween(DateTime(DateTime.now().year - 3), DateTime(DateTime.now().year + 3));
   List<DateTime> weekends = [];
   for (var i = 0; i < allDate.length; i++) {
@@ -171,7 +161,7 @@ List<DateTime> getWeekensV2(List<String> disabledDate) {
   return weekends;
 }
 
-List<DateTime> clearWeekendDays(List<DateTime> allDate) {
+List<DateTime> clearWeekendsDays(List<DateTime> allDate) {
   List<DateTime> res = [];
   for (var i = 0; i < allDate.length; i++) {
     if (allDate[i].weekday == DateTime.saturday || allDate[i].weekday == DateTime.sunday) {

@@ -6,6 +6,8 @@ import 'package:flutter_syncfusion_flutter_datepicker_v3/gzn_datepicker.dart';
 // ignore: depend_on_referenced_packages
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+// var COLOR_PRIMARY = Colors.red;
+
 void main() {
   runApp(const MyApp());
 }
@@ -61,32 +63,30 @@ class _MyHomePageState extends State<MyHomePage> {
               textAlign: TextAlign.center,
               'Click Plus Show Dialog\n${_resController.text}',
             ),
+            TextButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => DatePickerDialogV1(
+                    disabledDate: _disabledDate,
+                    controller: _datePickerController,
+                  ),
+                ).then((value) {
+                  if (value == false) return;
+                  _selectedDate = generateDate(_datePickerController.selectedDates!);
+                  setState(() {
+                    _resController.text = _selectedDate;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(_selectedDate),
+                  ));
+                });
+              },
+              child: const Text('Show Dialog'),
+            ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) => DatePickerDialogV1(
-              disabledDate: _disabledDate,
-              controller: _datePickerController,
-            ),
-          ).then((value) {
-            if (value == false) return;
-            _selectedDate = generateDate(_datePickerController.selectedDates!);
-            setState(() {
-              _resController.text = _selectedDate;
-            });
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(_selectedDate),
-            ));
-          });
-          ;
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
