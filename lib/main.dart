@@ -51,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -70,6 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   builder: (context) => DatePickerDialogV1(
                     disabledDate: _disabledDate,
                     controller: _datePickerController,
+                    selectionMode: DateRangePickerSelectionMode.multiple,
                   ),
                 ).then((value) {
                   if (value == false) return;

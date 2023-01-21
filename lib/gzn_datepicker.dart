@@ -18,8 +18,8 @@ class DatePickerDialogV1 extends StatelessWidget {
   void onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
     List<DateTime> res = [];
     if (args.value is PickerDateRange) {
-      res = getDaysInBetween(args.value.startDate, args.value.endDate ?? args.value.startDate);
-      res = clearWeekendsDays(res);
+      res = _getDaysInBetween(args.value.startDate, args.value.endDate ?? args.value.startDate);
+      res = _clearWeekendsDays(res);
     } else if (args.value is DateTime) {
       res = [args.value];
     } else if (args.value is List<DateTime>) {
@@ -47,7 +47,7 @@ class DatePickerDialogV1 extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                DatePickerV1(
+                _DatePickerV1(
                   onSelectionChanged: onSelectionChanged,
                   disabledDate: disabledDate,
                   controller: controller,
@@ -85,13 +85,13 @@ class DatePickerDialogV1 extends StatelessWidget {
 }
 
 //https://help.syncfusion.com/flutter/daterangepicker/overview
-class DatePickerV1 extends StatelessWidget {
+class _DatePickerV1 extends StatelessWidget {
   void Function(DateRangePickerSelectionChangedArgs args) onSelectionChanged;
   List<String> disabledDate;
   DateRangePickerController controller;
   DateRangePickerSelectionMode selectionMode;
 
-  DatePickerV1({
+  _DatePickerV1({
     Key? key,
     required this.onSelectionChanged,
     required this.disabledDate,
@@ -103,7 +103,7 @@ class DatePickerV1 extends StatelessWidget {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    List<DateTime> weekends = getWeekends(disabledDate);
+    List<DateTime> weekends = _getWeekends(disabledDate);
     return SizedBox(
       height: height * 0.5,
       width: width,
@@ -147,8 +147,8 @@ class DatePickerV1 extends StatelessWidget {
   }
 }
 
-List<DateTime> getWeekends(List<String> disabledDate) {
-  List<DateTime> allDate = getDaysInBetween(DateTime(DateTime.now().year - 3), DateTime(DateTime.now().year + 3));
+List<DateTime> _getWeekends(List<String> disabledDate) {
+  List<DateTime> allDate = _getDaysInBetween(DateTime(DateTime.now().year - 3), DateTime(DateTime.now().year + 3));
   List<DateTime> weekends = [];
   for (var i = 0; i < allDate.length; i++) {
     if (allDate[i].weekday == DateTime.saturday || allDate[i].weekday == DateTime.sunday) {
@@ -161,7 +161,7 @@ List<DateTime> getWeekends(List<String> disabledDate) {
   return weekends;
 }
 
-List<DateTime> clearWeekendsDays(List<DateTime> allDate) {
+List<DateTime> _clearWeekendsDays(List<DateTime> allDate) {
   List<DateTime> res = [];
   for (var i = 0; i < allDate.length; i++) {
     if (allDate[i].weekday == DateTime.saturday || allDate[i].weekday == DateTime.sunday) {
@@ -173,7 +173,7 @@ List<DateTime> clearWeekendsDays(List<DateTime> allDate) {
   return res;
 }
 
-List<DateTime> getDaysInBetween(DateTime startDate, DateTime endDate) {
+List<DateTime> _getDaysInBetween(DateTime startDate, DateTime endDate) {
   List<DateTime> days = [];
   for (int i = 0; i <= endDate.difference(startDate).inDays; i++) {
     days.add(startDate.add(Duration(days: i)));
