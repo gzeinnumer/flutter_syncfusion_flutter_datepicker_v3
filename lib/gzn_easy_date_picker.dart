@@ -3,12 +3,12 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-class DatePickerDialogV1 extends StatelessWidget {
+class EasyDatePicker extends StatelessWidget {
   List<String> disabledDate;
   DateRangePickerController controller;
   DateRangePickerSelectionMode selectionMode;
 
-  DatePickerDialogV1({
+  EasyDatePicker({
     Key? key,
     required this.disabledDate,
     required this.controller,

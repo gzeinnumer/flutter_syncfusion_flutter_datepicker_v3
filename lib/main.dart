@@ -1,7 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:flutter_syncfusion_flutter_datepicker_v3/gzn_datepicker.dart';
+import 'package:flutter_syncfusion_flutter_datepicker_v3/gzn_easy_date_picker.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (context) => DatePickerDialogV1(
+                  builder: (context) => EasyDatePicker(
                     disabledDate: _disabledDate,
                     controller: _datePickerController,
                     selectionMode: DateRangePickerSelectionMode.multiple,
