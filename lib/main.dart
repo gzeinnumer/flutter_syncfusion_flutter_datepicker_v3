@@ -46,7 +46,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _disabledDate = ["2023-01-31"];
+    // _disabledDate = _getWeekends([]);
+    _disabledDate = ["2023-04-01","2023-04-05"];
   }
 
   @override
@@ -72,6 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     disabledDate: _disabledDate,
                     controller: _datePickerController,
                     selectionMode: DateRangePickerSelectionMode.multiple,
+                    enablePastDates: true,
+                    enableWeekends: true,
                   ),
                 ).then((value) {
                   if (value == false) return;
