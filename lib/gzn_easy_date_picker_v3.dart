@@ -24,7 +24,10 @@ class EasyDatePickerV3 extends StatelessWidget {
   void onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
     List<DateTime> res = [];
     if (args.value is PickerDateRange) {
-      res = _getDaysInBetween(args.value.startDate, args.value.endDate ?? args.value.startDate);
+      res = _getDaysInBetween(
+        args.value.startDate,
+        args.value.endDate ?? args.value.startDate,
+      );
       res = _clearWeekendsDays(res);
     } else if (args.value is DateTime) {
       res = [args.value];
@@ -219,6 +222,21 @@ String generateDate(List<DateTime> date) {
       selectedDate = "$selectedDate${DateFormat('yyyy-MM-dd').format(date[i])}, ";
     }
     selectedDate = selectedDate.substring(0, selectedDate.lastIndexOf(", "));
+  }
+  return selectedDate;
+}
+
+String generateDateV2(List<DateTime> date) {
+  var selectedDate = "";
+  if (date.isNotEmpty) {
+    for (var i = 0; i < date.length; i++) {
+      if (i == 0) {
+        selectedDate = "$selectedDate${DateFormat('yyyy-MM-dd').format(date[i])} sd ";
+      }
+      if (i == date.length - 1) {
+        selectedDate = "$selectedDate${DateFormat('yyyy-MM-dd').format(date[i])}";
+      }
+    }
   }
   return selectedDate;
 }

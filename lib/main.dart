@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 // ignore: depend_on_referenced_packages
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-
 // var COLOR_PRIMARY = Colors.red;
 
 void main() {
@@ -82,16 +81,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 showDialog(
                   context: context,
                   builder: (context) => EasyDatePickerV3(
-                    controller: _datePickerController,
-                    // selectionMode: DateRangePickerSelectionMode.multiple,
+                    selectionMode: DateRangePickerSelectionMode.multiple,
                     // selectionMode: DateRangePickerSelectionMode.range,
                     // selectionMode: DateRangePickerSelectionMode.single,
-                    selectionMode: DateRangePickerSelectionMode.multiRange,
+                    // selectionMode: DateRangePickerSelectionMode.multiRange,
                     // selectionMode: DateRangePickerSelectionMode.extendableRange,
+                    controller: _datePickerController,
                     enablePastDates: true,
                     weekendDays: _weekendDays,
                     disabledDate: _disabledDates,
-                      spesialDays:_spesialDays
+                    spesialDays: _spesialDays,
                   ),
                 ).then((value) {
                   if (value == false) return;
@@ -111,4 +110,19 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+}
+
+String generateDateV2(List<DateTime> date) {
+  var selectedDate = "";
+  if (date.isNotEmpty) {
+    for (var i = 0; i < date.length; i++) {
+      if (i == 0) {
+        selectedDate = "$selectedDate${DateFormat('yyyy-MM-dd').format(date[i])} sd ";
+      }
+      if (i == date.length - 1) {
+        selectedDate = "$selectedDate${DateFormat('yyyy-MM-dd').format(date[i])}";
+      }
+    }
+  }
+  return selectedDate;
 }
