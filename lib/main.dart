@@ -1,10 +1,12 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:flutter_syncfusion_flutter_datepicker_v3/gzn_easy_date_picker.dart';
+import 'package:flutter_syncfusion_flutter_datepicker_v3/gzn_easy_date_picker_v3.dart';
+import 'package:intl/intl.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+
 
 // var COLOR_PRIMARY = Colors.red;
 
@@ -38,21 +40,31 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String _selectedDate = "";
-  List<String> _disabledDate = [];
+  List<String> _disabledDates = [];
+  List<int> _weekendDays = [];
+  List<String> _spesialDays = [];
   final DateRangePickerController _datePickerController = DateRangePickerController();
   final _resController = TextEditingController();
 
+  /*
+  PR :
+  Today Color
+  Callback
+   */
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     // _disabledDate = _getWeekends([]);
-    _disabledDate = ["2023-04-01","2023-04-05"];
+    _disabledDates = ["2023-06-01", "2023-06-05"];
+    _weekendDays = const [6, 7];
+    String strToday = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    // _spesialDays = ["2023-06-02", "2023-06-06"];
+    _spesialDays = [strToday];
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -69,12 +81,17 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 showDialog(
                   context: context,
-                  builder: (context) => EasyDatePicker(
-                    disabledDate: _disabledDate,
+                  builder: (context) => EasyDatePickerV3(
                     controller: _datePickerController,
-                    selectionMode: DateRangePickerSelectionMode.multiple,
+                    // selectionMode: DateRangePickerSelectionMode.multiple,
+                    // selectionMode: DateRangePickerSelectionMode.range,
+                    // selectionMode: DateRangePickerSelectionMode.single,
+                    selectionMode: DateRangePickerSelectionMode.multiRange,
+                    // selectionMode: DateRangePickerSelectionMode.extendableRange,
                     enablePastDates: true,
-                    enableWeekends: true,
+                    weekendDays: _weekendDays,
+                    disabledDate: _disabledDates,
+                      spesialDays:_spesialDays
                   ),
                 ).then((value) {
                   if (value == false) return;

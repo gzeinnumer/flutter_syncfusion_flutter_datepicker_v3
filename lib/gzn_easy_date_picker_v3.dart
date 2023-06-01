@@ -3,20 +3,22 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
-class EasyDatePicker extends StatelessWidget {
+class EasyDatePickerV3 extends StatelessWidget {
   List<String> disabledDate;
   DateRangePickerController controller;
   DateRangePickerSelectionMode selectionMode;
   bool enablePastDates;
-  bool enableWeekends;
+  List<int> weekendDays;
+  List<String> spesialDays;
 
-  EasyDatePicker({
+  EasyDatePickerV3({
     Key? key,
     required this.disabledDate,
     required this.controller,
     this.selectionMode = DateRangePickerSelectionMode.single, //multi, single, range, extendableRange, multiRange
     this.enablePastDates = true,
-    this.enableWeekends = true,
+    this.weekendDays = const [6, 7],
+    this.spesialDays = const [],
   }) : super(key: key);
 
   void onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
@@ -51,13 +53,14 @@ class EasyDatePicker extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
-                _DatePickerV1(
+                _DatePickerV3(
                   onSelectionChanged: onSelectionChanged,
                   disabledDate: disabledDate,
                   controller: controller,
                   selectionMode: selectionMode,
                   enablePastDates: enablePastDates,
-                  enableWeekends: enableWeekends,
+                  weekendDays: weekendDays,
+                  spesialDays: spesialDays,
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -91,34 +94,37 @@ class EasyDatePicker extends StatelessWidget {
 }
 
 //https://help.syncfusion.com/flutter/daterangepicker/overview
-class _DatePickerV1 extends StatelessWidget {
+class _DatePickerV3 extends StatelessWidget {
   void Function(DateRangePickerSelectionChangedArgs args) onSelectionChanged;
   List<String> disabledDate;
   DateRangePickerController controller;
   DateRangePickerSelectionMode selectionMode;
   bool enablePastDates;
-  bool enableWeekends;
+  List<int> weekendDays;
+  List<String> spesialDays;
 
-  _DatePickerV1({
+  _DatePickerV3({
     Key? key,
     required this.onSelectionChanged,
     required this.disabledDate,
     required this.controller,
     required this.selectionMode,
     required this.enablePastDates,
-    required this.enableWeekends,
+    required this.weekendDays,
+    required this.spesialDays,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    List<DateTime> blackoutDates = _getBlackoutDates(disabledDate, enableWeekends);
+    // List<DateTime> blackoutDates = ;
     return SizedBox(
       height: height * 0.5,
       width: width,
       child: SfDateRangePicker(
         controller: controller,
+        showTodayButton: true,
         enablePastDates: enablePastDates,
         navigationDirection: DateRangePickerNavigationDirection.vertical,
         navigationMode: DateRangePickerNavigationMode.scroll,
@@ -128,15 +134,30 @@ class _DatePickerV1 extends StatelessWidget {
         view: DateRangePickerView.month,
         monthViewSettings: DateRangePickerMonthViewSettings(
           showTrailingAndLeadingDates: true,
-          blackoutDates: blackoutDates,
+          blackoutDates: _stringToDate(disabledDate),
+          weekendDays: weekendDays,
+          specialDates: _stringToDate(spesialDays),
         ),
         monthCellStyle: DateRangePickerMonthCellStyle(
-          blackoutDatesDecoration: BoxDecoration(color: Colors.red.withOpacity(0.15), shape: BoxShape.circle),
-          blackoutDateTextStyle: const TextStyle(color: Colors.red, decoration: TextDecoration.lineThrough),
+          //grey color
+          blackoutDatesDecoration: BoxDecoration(color: Colors.grey.withOpacity(0.15), shape: BoxShape.circle),
+          blackoutDateTextStyle: const TextStyle(color: Colors.grey, decoration: TextDecoration.lineThrough),
+          //red color
+          weekendDatesDecoration: BoxDecoration(color: Colors.red.withOpacity(0.15), shape: BoxShape.circle),
+          weekendTextStyle: const TextStyle(color: Colors.red, decoration: TextDecoration.lineThrough),
+          //orange color
+          specialDatesDecoration: BoxDecoration(color: Colors.green.withOpacity(0.15), shape: BoxShape.circle),
+          specialDatesTextStyle: const TextStyle(color: Colors.green, decoration: TextDecoration.lineThrough),
+          //green
+          todayCellDecoration: BoxDecoration(color: Colors.green.withOpacity(0.15), shape: BoxShape.circle),
+          todayTextStyle: const TextStyle(color: Colors.green, decoration: TextDecoration.lineThrough),
         ),
         onSelectionChanged: onSelectionChanged,
         selectionMode: selectionMode,
         selectableDayPredicate: (DateTime date) {
+          if (weekendDays.contains(date.weekday)) {
+            return false;
+          }
           if (disabledDate.contains(DateFormat('yyyy-MM-dd').format(date))) {
             return false;
           }
@@ -147,21 +168,29 @@ class _DatePickerV1 extends StatelessWidget {
   }
 }
 
-List<DateTime> _getBlackoutDates(List<String> disabledDate, bool addWeekend) {
-  List<DateTime> allDate = _getDaysInBetween(DateTime(DateTime.now().year - 3), DateTime(DateTime.now().year + 3));
-  List<DateTime> weekends = [];
-  if (addWeekend) {
-    for (var i = 0; i < allDate.length; i++) {
-      if (allDate[i].weekday == DateTime.saturday || allDate[i].weekday == DateTime.sunday) {
-        weekends.add(allDate[i]);
-      }
-    }
-  }
+List<DateTime> _stringToDate(List<String> disabledDate) {
+  List<DateTime> res = [];
   for (var i = 0; i < disabledDate.length; i++) {
-    weekends.add(DateTime.parse(disabledDate[i]));
+    res.add(DateTime.parse(disabledDate[i]));
   }
-  return weekends;
+  return res;
 }
+
+// List<DateTime> _getBlackoutDates(List<String> disabledDate, List<int> addWeekend) {
+//   List<DateTime> allDate = _getDaysInBetween(DateTime(DateTime.now().year - 3), DateTime(DateTime.now().year + 3));
+//   List<DateTime> weekends = [];
+//   if (addWeekend) {
+//     for (var i = 0; i < allDate.length; i++) {
+//       if (allDate[i].weekday == DateTime.saturday || allDate[i].weekday == DateTime.sunday) {
+//         weekends.add(allDate[i]);
+//       }
+//     }
+//   }
+//   for (var i = 0; i < disabledDate.length; i++) {
+//     weekends.add(DateTime.parse(disabledDate[i]));
+//   }
+//   return weekends;
+// }
 
 List<DateTime> _clearWeekendsDays(List<DateTime> allDate) {
   List<DateTime> res = [];
